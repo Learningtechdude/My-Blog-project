@@ -5,7 +5,7 @@ from .models import Post
 import random
 import logging
 from django.core.paginator import Paginator
-from .forms import ContactForm
+from .forms import ContactForm, RegisterForm
 # posts = [
 #         {'id':1,'title':'Post 1', 'content':'Content of Post 1'},
 #         {'id':2,'title':'Post 2', 'content':'Content of Post 2'},
@@ -46,3 +46,13 @@ def contact_view(request):
             logger = logging.getLogger("TESTING")
             logger.debug(f'post Data is {form.cleaned_data['name']} {form.cleaned_data['email']} {form.cleaned_data['message']}')
     return render(request,'blog/contact.html')
+
+def register(request):
+        form = RegisterForm()
+        if request.method == 'POST':
+            form = RegisterForm(request.POST)
+            if form.is_valid():
+                user = form.save(commit=False)
+                user.set_password(form.cleaned_data['password'])
+                user.save()
+        return render(request,'blog/register.html',{'form':form})
